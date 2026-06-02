@@ -5,16 +5,16 @@
     # nixpkgs: the package set. Using unstable because Hyprland and Ghostty
     # move fast and the stable channel lags. Swap to "nixos-25.11" later if
     # you want to trade fresh packages for stability.
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     # home-manager: user-environment manager.
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";   # use the same nixpkgs, not its own
     };
 
    stylix = {
-      url = "github:nix-community/stylix";
+      url = "github:nix-community/stylix/";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
