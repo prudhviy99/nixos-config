@@ -1,0 +1,36 @@
+* {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 18px;
+    background-image: none;
+    box-shadow: none;
+}
+
+window {
+    background-color: rgba(30, 30, 46, 0.7);
+}
+
+button {
+    color: #cdd6f4;
+    background-color: #313244;
+    border-radius: 18px;
+    border: 2px solid #45475a;
+    margin: 10px;
+    padding: 0px;
+    /* sizing: buttons are a fraction of the screen, centered as a grid */
+    min-width: 180px;
+    min-height: 130px;
+}
+
+button:focus, button:hover {
+    background-color: #cba6f7;
+    color: #1e1e2e;
+    border: 2px solid #b4befe;
+    margin: 6px;
+}
+
+#lock       { }
+#suspend    { }
+#logout     { }
+#screenshot { }
+#reboot     { }
+#shutdown   { }

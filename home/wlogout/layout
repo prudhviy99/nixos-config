@@ -1,0 +1,6 @@
+{ "label": "lock",       "action": "hyprlock",                          "text": "  Lock",       "keybind": "l" }
+{ "label": "suspend",    "action": "systemctl suspend",                 "text": "  Suspend",    "keybind": "u" }
+{ "label": "logout",     "action": "hyprctl dispatch exit",             "text": "  Logout",     "keybind": "e" }
+{ "label": "screenshot", "action": "sleep 0.5 && hyprshot -m region",   "text": "  Screenshot", "keybind": "s" }
+{ "label": "reboot",     "action": "systemctl reboot",                  "text": "  Reboot",     "keybind": "r" }
+{ "label": "shutdown",   "action": "systemctl poweroff",                "text": "  Shutdown",   "keybind": "p" }

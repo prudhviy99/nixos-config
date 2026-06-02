@@ -56,5 +56,6 @@
     HandleLidSwitch              = "suspend";
     HandleLidSwitchDocked         = "ignore";
     HandleLidSwitchExternalPower  = "suspend";
+    HandlePowerKey               = "suspend";
   };
 }

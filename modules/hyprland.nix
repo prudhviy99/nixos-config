@@ -34,6 +34,13 @@
     };
   };
 
+  # Fingerprint for hyprlock (unlock) and sudo (terminal)
+  security.pam.services.sudo.fprintAuth = true;
+
+  # IMPORTANT: keep password login working — do NOT enable fprint on login/greetd.
+  # This avoids the known issue where fprint hijacks the password prompt.
+  security.pam.services.login.fprintAuth = false;
+
   # ---- Required system bits for hyprlock to authenticate ----
   security.pam.services.hyprlock = {};
 

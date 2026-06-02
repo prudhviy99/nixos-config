@@ -65,10 +65,26 @@
     tree
     unzip
     file
+
+    (pkgs.writeShellScriptBin "powermenu" ''
+      choice=$(printf "Lock\nSuspend\nLogout\nScreenshot\nReboot\nShutdown" | fuzzel --dmenu --prompt "Power: ")
+      case "$choice" in
+        Lock)       hyprlock ;;
+        Suspend)    systemctl suspend ;;
+        Logout)     hyprctl dispatch exit ;;
+        Screenshot) sleep 0.3 && hyprshot -m region ;;
+        Reboot)     systemctl reboot ;;
+        Shutdown)   systemctl poweroff ;;
+      esac
+    '')
   ];
 
   # ---- Hyprland config: drop our hyprland.conf into ~/.config/hypr/ ----
   xdg.configFile."hypr/hyprland.conf".source = ./hypr/hyprland.conf;
+
+  # hyprlock config
+  xdg.configFile."hypr/hyprlock.conf".source = ./hypr/hyprlock.conf;
+
 
   # ---- Waybar config ----
   xdg.configFile."waybar/config.jsonc".source = ./hypr/waybar/config.jsonc;
@@ -115,5 +131,26 @@
     };
   };
 
+services.hypridle = {
+  enable = true;
+  settings = {
+    general = {
+      lock_cmd = "pidof hyprlock || hyprlock";   # don't stack instances
+      before_sleep_cmd = "loginctl lock-session"; # lock before suspend
+      after_sleep_cmd = "hyprctl dispatch dpms on";
+    };
+    listener = [
+      {
+        timeout = 300;                 # 5 min -> lock
+        on-timeout = "loginctl lock-session";
+      }
+      {
+        timeout = 360;                 # 6 min -> screen off
+        on-timeout = "hyprctl dispatch dpms off";
+        on-resume = "hyprctl dispatch dpms on";
+      }
+    ];
+  };
+};
 
 }
