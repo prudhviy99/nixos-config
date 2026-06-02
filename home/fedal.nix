@@ -1,10 +1,12 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
    # We manage these two by hand (raw hyprland.conf + manual waybar style),
    # so tell Stylix to leave them alone and avoid conflicts.
    stylix.targets.hyprland.enable = false;
    stylix.targets.waybar.enable = false;
+   stylix.targets.fuzzel.enable = false;
+
 
   imports = [
     ./shell.nix
@@ -43,6 +45,8 @@
     # Editor (config later)
     neovim
     awww                # Wallaper
+    networkmanagerapplet # wifi
+    bluetui              # bluetooth tui
 
     # CLI essentials
     ripgrep             # rg: fast grep
@@ -69,28 +73,47 @@
   # ---- Waybar config ----
   xdg.configFile."waybar/config.jsonc".source = ./hypr/waybar/config.jsonc;
   xdg.configFile."waybar/style.css".source    = ./hypr/waybar/style.css;
+
+  xdg.configFile."networkmanager-dmenu/config.ini".text = ''
+  [dmenu]
+  dmenu_command = fuzzel --dmenu --prompt "Wi-Fi: "
+  wifi_chars = ▂▄▆█
+  list_saved = True
+'';
   
   programs.waybar.enable = true;
   services.mako.enable = true;
 
   programs.fuzzel = {
-  enable = true;
-  settings = {
-    main = {
-      terminal = "ghostty";
-      layer = "overlay";
-      width = 40;
-      lines = 10;
-      horizontal-pad = 20;
-      vertical-pad = 16;
-      inner-pad = 8;
+    enable = true;
+    settings = {
+      main = {
+        terminal = "ghostty";
+        layer = "overlay";
+        width = 45;
+        lines = 12;
+        horizontal-pad = 24;
+        vertical-pad = 20;
+        inner-pad = 12;
+        font = lib.mkForce "JetBrainsMono Nerd Font:size=13";
+      };
+      border = {
+        width = 2;
+        radius = 14;
+      };
+      colors = {
+        background = "1e1e2ef2";
+        text = "cdd6f4ff";
+        prompt = "cba6f7ff";
+        input = "cdd6f4ff";
+        match = "f38ba8ff";
+        selection = "313244ff";
+        selection-text = "cdd6f4ff";
+        selection-match = "f38ba8ff";
+        border = "cba6f7ff";
+      };
     };
-    border = {
-      width = 2;
-      radius = 12;
-    };
-    # Catppuccin Mocha
   };
-};
+
 
 }

@@ -9,40 +9,61 @@
 
     "modules-left":   ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right":  ["pulseaudio", "network", "battery", "tray"],
+    "modules-right":  ["bluetooth", "network", "pulseaudio", "battery", "group/tray-drawer"],
 
     "hyprland/workspaces": {
         "format": "{icon}",
-        "format-icons": {
-            "active":  "●",
-            "default": "○",
-            "empty":   "·"
-        }
+        "format-icons": { "active": "●", "default": "○", "empty": "·" }
     },
-    "hyprland/window": {
-        "max-length": 60,
-        "separate-outputs": true
-    },
+    "hyprland/window": { "max-length": 60, "separate-outputs": true },
     "clock": {
         "format": "{:%a %b %d  %H:%M}",
         "tooltip-format": "<tt>{calendar}</tt>"
+    },
+    "bluetooth": {
+        "format": " {status}",
+        "format-off": "",
+        "format-disabled": "",
+        "format-connected": " {device_alias}",
+        "format-connected-battery": " {device_alias} {device_battery_percentage}%",
+        "tooltip-format": "{controller_alias}\n{num_connections} connected",
+        "tooltip-format-enumerate-connected": "{device_alias}",
+        "on-click": "ghostty --class=bt-tui -e bluetui"
+    },
+    "network": {
+        "format-wifi": " {essid} {signalStrength}%",
+        "format-ethernet": " wired",
+        "format-disconnected": " offline",
+        "tooltip-format": "{ifname}: {ipaddr}",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
+        "on-click": "nm-connection-editor"
     },
     "pulseaudio": {
         "format": "{volume}% ",
         "format-muted": "muted",
         "on-click": "pavucontrol"
     },
-    "network": {
-        "format-wifi": "{essid} ({signalStrength}%) ",
-        "format-ethernet": "wired ",
-        "format-disconnected": "offline",
-        "tooltip-format": "{ifname}: {ipaddr}"
-    },
     "battery": {
         "format": "{capacity}% {icon}",
         "format-icons": ["", "", "", "", ""],
-        "format-charging": "{capacity}% ⚡",
+        "format-charging": "{capacity}% ",
         "states": { "warning": 20, "critical": 10 }
     },
-    "tray": { "spacing": 8 }
+    "group/tray-drawer": {
+        "orientation": "horizontal",
+        "drawer": {
+            "transition-duration": 300,
+            "children-class": "tray-child",
+            "transition-left-to-right": false
+        },
+        "modules": ["custom/tray-arrow", "tray"]
+    },
+    "custom/tray-arrow": {
+        "format": "",
+        "tooltip": false
+    },
+    "tray": {
+        "icon-size": 16,
+        "spacing": 0
+    }
 }

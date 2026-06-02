@@ -7,28 +7,22 @@
 }
 
 window#waybar {
-    background: rgba(30, 30, 46, 0.85);   /* Catppuccin base, translucent */
-    color: #cdd6f4;                        /* text */
-    border-radius: 8px;
-    border: 1px solid #313244;             /* surface0 */
-}
-
-#workspaces button {
-    padding: 0 8px;
-    color: #6c7086;                        /* overlay0 */
-    background: transparent;
-}
-#workspaces button.active {
-    color: #cba6f7;                        /* mauve */
-}
-#workspaces button:hover {
-    background: #313244;
+    background: rgba(30, 30, 46, 0.85);
     color: #cdd6f4;
+    border-radius: 8px;
+    border: 1px solid #313244;
 }
 
-#clock, #pulseaudio, #network, #battery, #tray, #window {
+#workspaces button { padding: 0 8px; color: #6c7086; background: transparent; }
+#workspaces button.active { color: #cba6f7; }
+#workspaces button:hover { background: #313244; color: #cdd6f4; }
+
+#clock, #pulseaudio, #network, #battery, #bluetooth, #tray, #window, #custom-tray-arrow {
     padding: 0 10px;
 }
 
-#battery.warning   { color: #fab387; }    /* peach */
-#battery.critical  { color: #f38ba8; }    /* red */
+#custom-tray-arrow { color: #cba6f7; }
+#bluetooth.connected { color: #89b4fa; }
+#network.disconnected { color: #f38ba8; }
+#battery.warning   { color: #fab387; }
+#battery.critical  { color: #f38ba8; }
