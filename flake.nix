@@ -13,6 +13,11 @@
       inputs.nixpkgs.follows = "nixpkgs";   # use the same nixpkgs, not its own
     };
 
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
    stylix = {
       url = "github:nix-community/stylix/";
       inputs.nixpkgs.follows = "nixpkgs";

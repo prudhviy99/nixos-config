@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
    # We manage these two by hand (raw hyprland.conf + manual waybar style),
@@ -13,6 +13,7 @@
     ./tmux.nix
     ./git.nix
     ./ghostty.nix
+    inputs.spicetify-nix.homeManagerModules.default
   ];
 
   home.username      = "fedal";
@@ -20,6 +21,7 @@
   home.stateVersion  = "26.05";  # match configuration.nix; do not change
   
   programs.home-manager.enable = true;
+  programs.spicetify.enable = true;
 
   # ---- User packages ----
   home.packages = with pkgs; [
@@ -47,6 +49,24 @@
     awww                # Wallaper
     networkmanagerapplet # wifi
     bluetui              # bluetooth tui
+    vesktop                  # Discord (Wayland screenshare + themeable)
+    vscode                   # use vscode-fhs instead if marketplace extensions misbehave
+    claude-code
+    antigravity
+    nautilus                 # GUI file manager
+    transmission_4-gtk       # torrent client (GTK GUI)
+
+
+    # neovim/LazyVim runtime deps (for group 5):
+    gcc
+    gnumake
+    nodejs
+    tree-sitter
+    unzip
+
+    python3
+    jdk21
+    maven
 
     # CLI essentials
     ripgrep             # rg: fast grep
@@ -130,6 +150,7 @@
       };
     };
   };
+
 
 services.hypridle = {
   enable = true;

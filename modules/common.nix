@@ -65,4 +65,13 @@
   # It's a compatibility marker, not a "use latest" flag. Set to whatever
   # NixOS version you installed.
   system.stateVersion = "26.05";
+
+  # Mullvad VPN (GUI). Requires systemd-resolved.
+  services.mullvad-vpn = {
+    enable = true;
+    package = pkgs.mullvad-vpn;   # GUI; omit for CLI-only
+  };
+  services.resolved.enable = true;   # required, or Mullvad breaks DNS
+
+
 }
