@@ -2,7 +2,8 @@
 
 {
   imports = [ ./hardware-configuration.nix ];
-
+  
+  systemd.services.tlp.serviceConfig.StandardOutput = "null";
   # ---- Hostname ----
   networking.hostName = "t14s";
 
@@ -15,7 +16,7 @@
     enable32Bit = true;
     extraPackages = with pkgs; [
       intel-media-driver       # iHD: gen8+ (your CPU)
-      vaapiIntel               # i965: legacy fallback
+      intel-vaapi-driver               # i965: legacy fallback
       vpl-gpu-rt               # newer media SDK
     ];
   };
@@ -48,9 +49,9 @@
   # After first boot, run: fwupdmgr refresh && fwupdmgr update
 
   # ---- Lid behavior ----
-  services.logind = {
-    lidSwitch         = "suspend";
-    lidSwitchDocked   = "ignore";
-    lidSwitchExternalPower = "suspend";
+  services.logind.settings.Login = {
+    HandleLidSwitch              = "suspend";
+    HandleLidSwitchDocked         = "ignore";
+    HandleLidSwitchExternalPower  = "suspend";
   };
 }

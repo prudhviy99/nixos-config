@@ -7,7 +7,7 @@
 
     # General use
     noto-fonts
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     noto-fonts-cjk-sans
 
     # Icon font waybar/wofi configs commonly reference
