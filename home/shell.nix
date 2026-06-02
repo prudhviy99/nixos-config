@@ -23,7 +23,7 @@
       cleanup  = "sudo nix-collect-garbage --delete-older-than 14d";
     };
 
-    initExtra = ''
+    initContent = ''
       # Paste your custom Mac zsh additions here, or use `source ~/.zshrc.local`
       # and put them in that file (untracked by git).
       [ -f ~/.zshrc.local ] && source ~/.zshrc.local

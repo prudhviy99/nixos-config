@@ -11,9 +11,6 @@
       font-family = "JetBrainsMono Nerd Font";
       font-size = 12;
 
-      # Catppuccin Mocha (ships with Ghostty, no manual install)
-      theme = "catppuccin-mocha";
-
       # Visual
       background-opacity = 0.95;
       window-decoration  = false;

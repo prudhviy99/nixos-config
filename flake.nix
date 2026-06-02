@@ -12,6 +12,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";   # use the same nixpkgs, not its own
     };
+
+   stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
@@ -27,6 +32,9 @@
         ./modules/common.nix
         ./modules/hyprland.nix
         ./modules/fonts.nix
+
+	inputs.stylix.nixosModules.stylix
+	./modules/theme.nix
 
         # Wire home-manager into the NixOS build
         home-manager.nixosModules.home-manager

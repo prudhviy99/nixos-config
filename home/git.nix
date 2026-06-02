@@ -1,25 +1,24 @@
 { config, pkgs, ... }:
-
 {
   programs.git = {
     enable = true;
-    userName  = "Prudhvi Yalamanchili";
-    userEmail = "prudhviy99@gmail.com";
+    ignores = [ ".DS_Store" "*.swp" ".direnv/" "result" "result-*" ];
 
-    extraConfig = {
+    settings = {
+      user.name  = "Prudhvi Yalamanchili";
+      user.email = "prudhviy99@gmail.com";
+
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;
       core.editor = "nvim";
-    };
 
-    aliases = {
-      st = "status";
-      co = "checkout";
-      br = "branch";
-      lg = "log --oneline --graph --decorate -20";
+      alias = {
+        st = "status";
+        co = "checkout";
+        br = "branch";
+        lg = "log --oneline --graph --decorate -20";
+      };
     };
-
-    ignores = [ ".DS_Store" "*.swp" ".direnv/" "result" "result-*" ];
   };
 }
