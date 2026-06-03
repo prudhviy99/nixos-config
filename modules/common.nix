@@ -31,7 +31,7 @@
   users.users.fedal = {
     isNormalUser = true;
     description = "Prudhvi";
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" "docker" ];
     shell = pkgs.zsh;
   };
 
@@ -73,5 +73,6 @@
   };
   services.resolved.enable = true;   # required, or Mullvad breaks DNS
 
+  virtualisation.docker.enable = true;
 
 }

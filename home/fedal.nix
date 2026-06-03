@@ -86,6 +86,22 @@
     unzip
     file
 
+    docker-compose
+    lazydocker
+
+    kubectl
+    kubernetes-helm
+    k9s
+    kubectx
+
+    awscli2
+    ssm-session-manager-plugin
+
+
+    postgresql
+    pgcli
+    redis
+
     (pkgs.writeShellScriptBin "powermenu" ''
       choice=$(printf "Lock\nSuspend\nLogout\nScreenshot\nReboot\nShutdown" | fuzzel --dmenu --prompt "Power: ")
       case "$choice" in
