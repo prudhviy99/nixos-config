@@ -7,46 +7,52 @@
     "margin-left": 8,
     "margin-right": 8,
 
-    "modules-left":   ["hyprland/workspaces", "hyprland/window"],
+    "modules-left":   ["hyprland/workspaces", "mpris"],
     "modules-center": ["clock"],
-    "modules-right":  ["bluetooth", "network", "pulseaudio", "battery", "group/tray-drawer"],
+    "modules-right":  ["bluetooth", "network", "pulseaudio", "battery", "tray"],
 
     "hyprland/workspaces": {
         "format": "{icon}",
         "format-icons": { "active": "●", "default": "○", "empty": "·" }
     },
-    "hyprland/window": { "max-length": 60, "separate-outputs": true },
+    "mpris": {
+        "format": "  {artist} — {title}",
+        "format-paused": "",
+        "tooltip-format": "{player} — {artist} — {title}",
+        "max-length": 50,
+        "ignored-players": ["firefox", "chromium"]
+    },
     "clock": {
         "format": "{:%a %b %d  %H:%M}",
         "tooltip-format": "<tt>{calendar}</tt>"
     },
     "bluetooth": {
-        "format": " {status}",
+        "format": "",
         "format-off": "",
         "format-disabled": "",
-        "format-connected": " {device_alias}",
-        "format-connected-battery": " {device_alias} {device_battery_percentage}%",
+        "format-connected": "  {device_alias}",
+        "format-connected-battery": "  {device_alias} {device_battery_percentage}%",
         "tooltip-format": "{controller_alias}\n{num_connections} connected",
         "tooltip-format-enumerate-connected": "{device_alias}",
         "on-click": "ghostty --class=bt-tui -e bluetui"
     },
     "network": {
-        "format-wifi": " {essid} {signalStrength}%",
-        "format-ethernet": " wired",
-        "format-disconnected": " offline",
+        "format-wifi": "  {essid}",
+        "format-ethernet": "  wired",
+        "format-disconnected": "  offline",
         "tooltip-format": "{ifname}: {ipaddr}",
         "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
         "on-click": "nm-connection-editor"
     },
     "pulseaudio": {
-        "format": "{volume}% ",
-        "format-muted": "muted",
+        "format": "  {volume}%",
+        "format-muted": "  muted",
         "on-click": "pavucontrol"
     },
     "battery": {
-        "format": "{capacity}% {icon}",
-        "format-icons": ["", "", "", "", ""],
-        "format-charging": "{capacity}% ",
+        "format": "{icon}  {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "format-charging": "  {capacity}%",
         "states": { "warning": 20, "critical": 10 }
     },
     "group/tray-drawer": {

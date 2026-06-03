@@ -26,7 +26,7 @@
   # ---- User packages ----
   home.packages = with pkgs; [
     # Browser
-    chromium
+    google-chrome
 
     # Hyprland ecosystem
     waybar              # status bar
@@ -44,6 +44,8 @@
     slurp               # region selector
     pavucontrol         # PulseAudio volume control GUI
     fuzzel              # App launcher
+    snixembed           # waybar tray
+
     # Editor (config later)
     neovim
     awww                # Wallaper
@@ -55,7 +57,7 @@
     antigravity
     nautilus                 # GUI file manager
     transmission_4-gtk       # torrent client (GTK GUI)
-
+    localsend                # file sharing over network
 
     # neovim/LazyVim runtime deps (for group 5):
     gcc
@@ -120,6 +122,16 @@
 
   # hyprlock config
   xdg.configFile."hypr/hyprlock.conf".source = ./hypr/hyprlock.conf;
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "x-scheme-handler/http"  = "google-chrome.desktop";
+      "x-scheme-handler/https" = "google-chrome.desktop";
+      "text/html"              = "google-chrome.desktop";
+      "x-scheme-handler/zoommtg" = "Zoom.desktop";
+    };
+  };
 
 
   # ---- Waybar config ----
