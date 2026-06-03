@@ -7,22 +7,34 @@
 }
 
 window#waybar {
-    background: rgba(30, 30, 46, 0.85);
+    background: transparent;
     color: #cdd6f4;
-    border-radius: 8px;
-    border: 1px solid #313244;
 }
 
-#workspaces button { padding: 0 8px; color: #6c7086; background: transparent; }
+/* group modules into pills */
+#workspaces,
+#window,
+#clock,
+#bluetooth,
+#network,
+#pulseaudio,
+#battery,
+#tray,
+#custom-tray-arrow {
+    background: rgba(30, 30, 46, 0.55);
+    border: 1px solid rgba(49, 50, 68, 0.6);
+    border-radius: 8px;
+    padding: 0 10px;
+    margin: 2px 0;
+}
+
+/* workspaces */
+#workspaces button { padding: 0 8px; color: #6c7086; background: transparent; border: none; }
 #workspaces button.active { color: #cba6f7; }
 #workspaces button:hover { background: #313244; color: #cdd6f4; }
-
-#clock, #pulseaudio, #network, #battery, #bluetooth, #tray, #window, #custom-tray-arrow {
-    padding: 0 10px;
-}
 
 #custom-tray-arrow { color: #cba6f7; }
 #bluetooth.connected { color: #89b4fa; }
 #network.disconnected { color: #f38ba8; }
-#battery.warning   { color: #fab387; }
-#battery.critical  { color: #f38ba8; }
+#battery.warning  { color: #fab387; }
+#battery.critical { color: #f38ba8; }
