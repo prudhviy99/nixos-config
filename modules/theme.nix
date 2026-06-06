@@ -9,7 +9,7 @@
 
     # Wallpaper (required) + the color scheme derived from Catppuccin Mocha
     image = ../wallpapers/wall.jpg;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa.yaml";
 
     # Fonts
     fonts = {

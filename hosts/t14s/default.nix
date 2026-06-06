@@ -7,6 +7,13 @@
   # ---- Hostname ----
   networking.hostName = "t14s";
 
+  # ADD THIS TO YOUR GLOBAL SYSTEM CONFIGURATION (e.g., configuration.nix)
+  networking.firewall = {
+    allowedTCPPorts = [ 53317 ];
+    allowedUDPPorts = [ 53317 ];
+  };
+
+
   # ---- Intel CPU microcode (10th gen on T14s Gen 1 Intel) ----
   hardware.cpu.intel.updateMicrocode = true;
 

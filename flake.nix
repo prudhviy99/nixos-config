@@ -1,6 +1,5 @@
 {
   description = "Prudhvi's NixOS config";
-
   inputs = {
     # nixpkgs: the package set. Using unstable because Hyprland and Ghostty
     # move fast and the stable channel lags. Swap to "nixos-25.11" later if
@@ -12,23 +11,20 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";   # use the same nixpkgs, not its own
     };
-
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-   stylix = {
+    stylix = {
       url = "github:nix-community/stylix/";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
   let
     system = "x86_64-linux";
   in {
-    # One entry per host. Add hosts.desktop later.
+    # One entry per host.
     nixosConfigurations.t14s = nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit inputs; };
@@ -37,10 +33,29 @@
         ./modules/common.nix
         ./modules/hyprland.nix
         ./modules/fonts.nix
+        inputs.stylix.nixosModules.stylix
+        ./modules/theme.nix
+        # Wire home-manager into the NixOS build
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.fedal = import ./home/fedal.nix;
+          home-manager.extraSpecialArgs = { inherit inputs; };
+        }
+      ];
+    };
 
-	inputs.stylix.nixosModules.stylix
-	./modules/theme.nix
-
+    nixosConfigurations.desktop = nixpkgs.lib.nixosSystem {
+      inherit system;
+      specialArgs = { inherit inputs; };
+      modules = [
+        ./hosts/desktop
+        ./modules/common.nix
+        ./modules/hyprland.nix
+        ./modules/fonts.nix
+        inputs.stylix.nixosModules.stylix
+        ./modules/theme.nix
         # Wire home-manager into the NixOS build
         home-manager.nixosModules.home-manager
         {

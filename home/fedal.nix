@@ -80,7 +80,7 @@
     jq                  # JSON processor
     yq                  # YAML processor
     htop
-    btop                # nicer htop
+    (btop.override { cudaSupport = true; })                # nicer htop
     lazygit             # git TUI
     gh                  # GitHub CLI
     tldr                # quick command examples
@@ -147,6 +147,7 @@
   
   programs.waybar.enable = true;
   services.mako.enable = true;
+
 
   programs.fuzzel = {
     enable = true;
