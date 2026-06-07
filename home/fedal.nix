@@ -45,9 +45,11 @@
     slurp               # region selector
     pavucontrol         # PulseAudio volume control GUI
     fuzzel              # App launcher
+    ollama              # local AI
 
     # Editor (config later)
     neovim
+    zed-editor
     awww                # Wallaper
     networkmanagerapplet # wifi
     bluetui              # bluetooth tui
