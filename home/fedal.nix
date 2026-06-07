@@ -44,7 +44,6 @@
     slurp               # region selector
     pavucontrol         # PulseAudio volume control GUI
     fuzzel              # App launcher
-    snixembed           # waybar tray
 
     # Editor (config later)
     neovim
