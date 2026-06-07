@@ -5,7 +5,7 @@
    # so tell Stylix to leave them alone and avoid conflicts.
    stylix.targets.hyprland.enable = false;
    stylix.targets.waybar.enable = false;
-   stylix.targets.fuzzel.enable = false;
+   stylix.targets.fuzzel.enable = true;
 
 
   imports = [
@@ -22,6 +22,7 @@
   
   programs.home-manager.enable = true;
   programs.spicetify.enable = true;
+
 
   # ---- User packages ----
   home.packages = with pkgs; [
@@ -135,7 +136,49 @@
 
   # ---- Waybar config ----
   xdg.configFile."waybar/config.jsonc".source = ./hypr/waybar/config.jsonc;
-  xdg.configFile."waybar/style.css".source    = ./hypr/waybar/style.css;
+
+  xdg.configFile."waybar/style.css".text = ''
+    @define-color bg      ${config.lib.stylix.colors.withHashtag.base00};
+    @define-color surface ${config.lib.stylix.colors.withHashtag.base02};
+    @define-color muted   ${config.lib.stylix.colors.withHashtag.base03};
+    @define-color text    ${config.lib.stylix.colors.withHashtag.base05};
+    @define-color accent  ${config.lib.stylix.colors.withHashtag.base0D};
+    @define-color red     ${config.lib.stylix.colors.withHashtag.base08};
+    @define-color orange  ${config.lib.stylix.colors.withHashtag.base09};
+
+    * {
+        font-family: "JetBrainsMono Nerd Font", monospace;
+        font-size: 11px;
+        border: none;
+        border-radius: 0;
+        min-height: 0;
+    }
+
+    window#waybar {
+        background: transparent;
+        color: @text;
+    }
+
+    #workspaces, #window, #clock, #bluetooth, #network,
+    #pulseaudio, #battery, #tray, #custom-tray-arrow {
+        background: alpha(@bg, 0.55);
+        border: 1px solid alpha(@surface, 0.6);
+        border-radius: 8px;
+        padding: 0 8px;
+        margin: 1px 0;
+    }
+
+    #workspaces button { padding: 0 6px; color: @muted; background: transparent; border: none; }
+    #workspaces button.active { color: @accent; }
+    #workspaces button:hover { background: @surface; color: @text; }
+
+    #custom-tray-arrow { color: @accent; }
+    #bluetooth.connected { color: @accent; }
+    #network.disconnected { color: @red; }
+    #battery.warning  { color: @orange; }
+    #battery.critical { color: @red; }
+  '';
+
 
   xdg.configFile."networkmanager-dmenu/config.ini".text = ''
   [dmenu]
@@ -164,17 +207,6 @@
       border = {
         width = 2;
         radius = 14;
-      };
-      colors = {
-        background = "1e1e2ef2";
-        text = "cdd6f4ff";
-        prompt = "cba6f7ff";
-        input = "cdd6f4ff";
-        match = "f38ba8ff";
-        selection = "313244ff";
-        selection-text = "cdd6f4ff";
-        selection-match = "f38ba8ff";
-        border = "cba6f7ff";
       };
     };
   };
