@@ -46,6 +46,28 @@
       ];
     };
 
+    nixosConfigurations.t14g3 = nixpkgs.lib.nixosSystem {
+      inherit system;
+      specialArgs = { inherit inputs; };
+      modules = [
+        ./hosts/t14g3
+        ./modules/common.nix
+        ./modules/hyprland.nix
+        ./modules/fonts.nix
+        inputs.stylix.nixosModules.stylix
+        ./modules/theme.nix
+        # Wire home-manager into the NixOS build
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.fedal = import ./home/fedal.nix;
+          home-manager.extraSpecialArgs = { inherit inputs; };
+        }
+      ];
+    };
+
+
     nixosConfigurations.desktop = nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit inputs; };
