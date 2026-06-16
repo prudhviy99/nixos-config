@@ -46,6 +46,7 @@
     pavucontrol         # PulseAudio volume control GUI
     fuzzel              # App launcher
     ollama              # local AI
+    fastfetch           # display system information
 
     # Editor (config later)
     neovim
@@ -57,6 +58,7 @@
     vscode                   # use vscode-fhs instead if marketplace extensions misbehave
     claude-code
     antigravity
+    jetbrains.idea       # intellij free
     nautilus                 # GUI file manager
     transmission_4-gtk       # torrent client (GTK GUI)
     localsend                # file sharing over network
