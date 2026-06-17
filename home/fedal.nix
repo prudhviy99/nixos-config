@@ -119,7 +119,18 @@
         Shutdown)   systemctl poweroff ;;
       esac
     '')
+
+    (pkgs.writeShellScriptBin "setwallpaper" ''
+      if [ -n "$1" ]; then
+        awww img "$1"
+      else
+        file=$(find ~/Pictures/wallpapers -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.webp" \) 2>/dev/null | fuzzel --dmenu --prompt "Wallpaper: ")
+        [ -n "$file" ] && awww img "$file"
+      fi
+    '')
   ];
+
+  home.file."Pictures/wallpapers/.keep".text = "";
 
   # ---- Hyprland config: drop our hyprland.conf into ~/.config/hypr/ ----
   xdg.configFile."hypr/hyprland.conf".source = ./hypr/hyprland.conf;
