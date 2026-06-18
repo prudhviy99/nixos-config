@@ -29,7 +29,7 @@
     open = true;                   # MANDATORY for Blackwell — proprietary modules don't support it
     modesetting.enable = true;     # required for Wayland; adds nvidia-drm.modeset=1 for you
     nvidiaSettings = true;
-    powerManagement.enable = false; # desktop; leave off (can cause resume glitches)
+    powerManagement.enable = true;
     # Pick a package the 5080 supports. beta/latest are safest for a new card.
     package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
