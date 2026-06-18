@@ -23,7 +23,6 @@
   programs.home-manager.enable = true;
   programs.spicetify.enable = true;
 
-
   # ---- User packages ----
   home.packages = with pkgs; [
     # Browser
@@ -47,6 +46,7 @@
     fuzzel              # App launcher
     ollama              # local AI
     fastfetch           # display system information
+    openrgb             # rgb control
 
     # Editor (config later)
     neovim

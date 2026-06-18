@@ -4,6 +4,7 @@
   # ---- Hyprland Wayland session ----
   programs.hyprland = {
     enable = true;
+    withUWSM = true;
     xwayland.enable = true;   # for X11 apps (most browsers, electron)
   };
 
@@ -28,7 +29,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --asterisks --cmd Hyprland";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --asterisks --cmd 'uwsm start hyprland-uwsm.desktop'";
         user = "greeter";
       };
     };

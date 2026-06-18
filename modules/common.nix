@@ -31,7 +31,7 @@
   users.users.fedal = {
     isNormalUser = true;
     description = "Prudhvi";
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" "docker" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" "docker" "i2c" ];
     shell = pkgs.zsh;
   };
 
@@ -74,5 +74,10 @@
   services.resolved.enable = true;   # required, or Mullvad breaks DNS
 
   virtualisation.docker.enable = true;
+
+  # ---- OpenRGB udev rules (allows non-root RGB control) ----
+  services.udev.packages = [ pkgs.openrgb ];
+  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
+  boot.kernelParams = [ "acpi_enforce_resources=lax" ];
 
 }
