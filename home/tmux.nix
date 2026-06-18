@@ -3,7 +3,6 @@
 {
   programs.tmux = {
     enable = true;
-    shortcut = "a";          # prefix is Ctrl+a instead of Ctrl+b
     baseIndex = 1;           # windows start at 1, not 0 (easier to reach)
     keyMode = "vi";
     mouse = true;

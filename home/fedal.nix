@@ -135,6 +135,15 @@
   xdg.configFile."autostart/nm-applet.desktop".text = "[Desktop Entry]\nHidden=true\n";
   xdg.configFile."autostart/blueman.desktop".text = "[Desktop Entry]\nHidden=true\n";
 
+  # ---- Neovim / LazyVim config ----
+  # Files are linked individually so ~/.config/nvim/ stays writable
+  # (lazy-lock.json and new plugin files can be created freely).
+  # To add plugins: create lua/plugins/myplugins.lua in this repo.
+  xdg.configFile."nvim" = {
+    source = ./nvim;
+    recursive = true;
+  };
+
   # ---- Hyprland config: drop our hyprland.conf into ~/.config/hypr/ ----
   xdg.configFile."hypr/hyprland.conf".source = ./hypr/hyprland.conf;
 
