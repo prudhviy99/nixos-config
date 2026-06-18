@@ -70,6 +70,7 @@
     },
     "tray": {
         "icon-size": 16,
-        "spacing": 0
+        "spacing": 6,
+        "ignored-entries": ["nm-applet", "nm_applet", "network-manager", "blueman", "blueman-applet", "bluetooth"]
     }
 }

@@ -132,6 +132,9 @@
 
   home.file."Pictures/wallpapers/.keep".text = "";
 
+  xdg.configFile."autostart/nm-applet.desktop".text = "[Desktop Entry]\nHidden=true\n";
+  xdg.configFile."autostart/blueman.desktop".text = "[Desktop Entry]\nHidden=true\n";
+
   # ---- Hyprland config: drop our hyprland.conf into ~/.config/hypr/ ----
   xdg.configFile."hypr/hyprland.conf".source = ./hypr/hyprland.conf;
 
