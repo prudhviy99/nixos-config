@@ -42,7 +42,7 @@
         "format-disconnected": "  offline",
         "tooltip-format": "{ifname}: {ipaddr}",
         "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
-        "on-click": "nm-connection-editor"
+        "on-click": "networkmanager_dmenu"
     },
     "pulseaudio": {
         "format": "  {volume}%",

@@ -6,7 +6,10 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # ---- Networking ----
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+    enable = true;
+    wifi.powersave = false;  # prevents random drops and failed reconnects after suspend
+  };
 
   # ---- Locale / time ----
   time.timeZone = "America/Los_Angeles";

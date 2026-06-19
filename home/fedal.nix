@@ -52,7 +52,7 @@
     neovim
     zed-editor
     awww                # Wallaper
-    networkmanagerapplet # wifi
+    networkmanager_dmenu # wifi switcher (replaces nm-applet tray icon)
     bluetui              # bluetooth tui
     vesktop                  # Discord (Wayland screenshare + themeable)
     vscode                   # use vscode-fhs instead if marketplace extensions misbehave
@@ -132,8 +132,8 @@
 
   home.file."Pictures/wallpapers/.keep".text = "";
 
-  xdg.configFile."autostart/nm-applet.desktop".text = "[Desktop Entry]\nHidden=true\n";
-  xdg.configFile."autostart/blueman.desktop".text = "[Desktop Entry]\nHidden=true\n";
+  # Suppress tray icons for applets already represented by waybar modules
+  xdg.configFile."autostart/blueman-applet.desktop".text = "[Desktop Entry]\nHidden=true\n";
 
   # ---- Neovim / LazyVim config ----
   # Files are linked individually so ~/.config/nvim/ stays writable

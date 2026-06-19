@@ -13,6 +13,9 @@
     allowedUDPPorts = [ 53317 ];
   };
 
+  
+  # fix screen flickering
+  boot.kernelParams = [ "i915.enable_psr=0" ];
 
   # ---- Intel CPU microcode (10th gen on T14s Gen 1 Intel) ----
   hardware.cpu.intel.updateMicrocode = true;
@@ -52,6 +55,7 @@
 
   # ---- Fingerprint reader (Synaptics WBDI on the T14s Gen 1) ----
   services.fprintd.enable = true;
+  systemd.services.fprintd.serviceConfig.TimeoutStopSec = 5;
 
   # ---- Firmware updates via LVFS (Lenovo pushes BIOS through this) ----
   services.fwupd.enable = true;
