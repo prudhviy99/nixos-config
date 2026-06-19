@@ -46,6 +46,10 @@
       # Massively extends battery lifespan over the years.
       START_CHARGE_THRESH_BAT0 = 75;
       STOP_CHARGE_THRESH_BAT0  = 80;
+
+      # TLP overrides NetworkManager's wifi.powersave=false — explicitly disable it here
+      WIFI_PWR_ON_AC  = "off";
+      WIFI_PWR_ON_BAT = "off";
     };
   };
   services.thermald.enable = true;   # Intel thermal management daemon

@@ -17,6 +17,13 @@
   # fix screen flickering
   boot.kernelParams = [ "i915.enable_psr=0" ];
 
+  # Intel CNVi (Alder Lake-P) WiFi keeps dropping after inactivity even with TLP power-save off.
+  # Force-disable power management at the driver level.
+  boot.extraModprobeConfig = ''
+    options iwlwifi power_save=0
+    options iwlmvm power_scheme=1
+  '';
+
   # ---- Intel CPU microcode (10th gen on T14s Gen 1 Intel) ----
   hardware.cpu.intel.updateMicrocode = true;
 
@@ -49,6 +56,10 @@
       # Massively extends battery lifespan over the years.
       START_CHARGE_THRESH_BAT0 = 75;
       STOP_CHARGE_THRESH_BAT0  = 80;
+
+      # TLP overrides NetworkManager's wifi.powersave=false — explicitly disable it here
+      WIFI_PWR_ON_AC  = "off";
+      WIFI_PWR_ON_BAT = "off";
     };
   };
   services.thermald.enable = true;   # Intel thermal management daemon
