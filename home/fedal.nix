@@ -133,7 +133,7 @@
   home.file."Pictures/wallpapers/.keep".text = "";
 
   # Suppress tray icons for applets already represented by waybar modules
-  xdg.configFile."autostart/blueman-applet.desktop".text = "[Desktop Entry]\nHidden=true\n";
+  xdg.configFile."autostart/blueman.desktop".text = "[Desktop Entry]\nHidden=true\n";
 
   # ---- Neovim / LazyVim config ----
   # Files are linked individually so ~/.config/nvim/ stays writable
