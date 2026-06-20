@@ -47,6 +47,7 @@
     ollama              # local AI
     fastfetch           # display system information
     openrgb             # rgb control
+    obsidian            # note taking
 
     # Editor (config later)
     neovim
