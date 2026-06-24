@@ -13,7 +13,6 @@
     ./tmux.nix
     ./git.nix
     ./ghostty.nix
-    inputs.spicetify-nix.homeManagerModules.default
   ];
 
   home.username      = "fedal";
@@ -21,8 +20,6 @@
   home.stateVersion  = "26.05";  # match configuration.nix; do not change
   
   programs.home-manager.enable = true;
-  programs.spicetify.enable = true;
-
   # ---- User packages ----
   home.packages = with pkgs; [
     # Browser
@@ -55,7 +52,8 @@
     awww                # Wallaper
     networkmanager_dmenu # wifi switcher (replaces nm-applet tray icon)
     bluetui              # bluetooth tui
-    vesktop                  # Discord (Wayland screenshare + themeable)
+    spotify
+    discord
     vscode                   # use vscode-fhs instead if marketplace extensions misbehave
     claude-code
     antigravity

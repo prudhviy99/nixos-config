@@ -5,7 +5,7 @@
   
   systemd.services.tlp.serviceConfig.StandardOutput = "null";
   # ---- Hostname ----
-  networking.hostName = "t14g3";
+  networking.hostName = "t14g3p";
 
   # ADD THIS TO YOUR GLOBAL SYSTEM CONFIGURATION (e.g., configuration.nix)
   networking.firewall = {

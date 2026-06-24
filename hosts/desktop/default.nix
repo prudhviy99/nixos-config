@@ -36,7 +36,7 @@
 
   # --- Wayland / Electron / hardware video decode ---
   environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";          # runs Electron/Chromium (Vesktop, VSCode) natively on Wayland -> clean screenshare
+    NIXOS_OZONE_WL = "1";          # runs Electron/Chromium (Discord, VSCode) natively on Wayland -> clean screenshare
     LIBVA_DRIVER_NAME = "nvidia";  # VA-API decode through nvidia
   };
 
@@ -45,7 +45,7 @@
 
   # --- Desktop apps ---
   environment.systemPackages = with pkgs; [
-    vesktop          # Discord client with Wayland screenshare + audio
+    discord
     pavucontrol      # pick the Topping DAC as default sink/source
     wl-clipboard
   ];
