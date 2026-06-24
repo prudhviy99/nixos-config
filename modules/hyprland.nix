@@ -45,6 +45,14 @@
   # ---- Required system bits for hyprlock to authenticate ----
   security.pam.services.hyprlock = {};
 
+  # ---- GVFS: virtual filesystem backend for Nautilus ----
+  # Enables trash, network locations (SFTP/SMB/WebDAV), MTP (Android), etc.
+  services.gvfs.enable = true;
+
+  # Gnome Keyring: stores passwords for network shares so you don't re-enter them
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.login.enableGnomeKeyring = true;
+
   # ---- Polkit agent: prompts for sudo password from GUI apps ----
   security.polkit.enable = true;
   systemd.user.services.polkit-gnome-authentication-agent-1 = {

@@ -61,6 +61,7 @@
     nautilus                 # GUI file manager
     transmission_4-gtk       # torrent client (GTK GUI)
     localsend                # file sharing over network
+    vlc                      # media player
 
     # neovim/LazyVim runtime deps (for group 5):
     gcc
@@ -248,12 +249,12 @@ services.hypridle = {
     };
     listener = [
       {
-        timeout = 300;                 # 5 min -> lock
-        on-timeout = "loginctl lock-session";
+        timeout = 300;                 # 5 min -> lock (skipped if media is playing)
+        on-timeout = "playerctl status 2>/dev/null | grep -q Playing || loginctl lock-session";
       }
       {
-        timeout = 360;                 # 6 min -> screen off
-        on-timeout = "hyprctl dispatch dpms off";
+        timeout = 360;                 # 6 min -> screen off (skipped if media is playing)
+        on-timeout = "playerctl status 2>/dev/null | grep -q Playing || hyprctl dispatch dpms off";
         on-resume = "hyprctl dispatch dpms on";
       }
     ];
