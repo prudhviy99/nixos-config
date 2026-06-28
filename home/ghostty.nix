@@ -12,7 +12,8 @@
       font-size = 12;
 
       # Visual
-      background-opacity = 0.95;
+      background         = "000000";
+      background-opacity = 0.85;
       window-decoration  = false;
       window-padding-x   = 8;
       window-padding-y   = 8;

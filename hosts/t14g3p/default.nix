@@ -13,6 +13,11 @@
     allowedUDPPorts = [ 53317 ];
   };
 
+  #memtest86+
+  
+  boot.loader.systemd-boot.memtest86.enable = true;
+
+
   
   # fix screen flickering
   boot.kernelParams = [ "i915.enable_psr=0" ];
