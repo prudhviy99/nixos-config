@@ -10,6 +10,14 @@ get_external() {
 }
 
 case "${1:-}" in
+  init)
+    # Called at Hyprland startup — disable eDP-1 immediately if lid is already closed
+    LID_STATE=$(cat /proc/acpi/button/lid/*/state 2>/dev/null | awk '{print $2}')
+    if [ "$LID_STATE" = "closed" ]; then
+      sleep 2  # wait for monitors to fully initialise
+      exec "$0" on
+    fi
+    ;;
   on)
     # Lid closing — enter clamshell if an external monitor is present
     EXTERNAL=$(get_external)
