@@ -146,6 +146,10 @@
 
   # ---- Hyprland config: drop our hyprland.conf into ~/.config/hypr/ ----
   xdg.configFile."hypr/hyprland.conf".source = ./hypr/hyprland.conf;
+  xdg.configFile."hypr/clamshell.sh" = {
+    source = ./hypr/clamshell.sh;
+    executable = true;
+  };
 
   # hyprlock config
   xdg.configFile."hypr/hyprlock.conf".source = ./hypr/hyprlock.conf;
@@ -157,6 +161,7 @@
       "x-scheme-handler/https" = "google-chrome.desktop";
       "text/html"              = "google-chrome.desktop";
       "x-scheme-handler/zoommtg" = "Zoom.desktop";
+      "text/markdown" = "google-chrome.desktop";
     };
   };
 
@@ -214,7 +219,13 @@
   list_saved = True
 '';
   
-  programs.waybar.enable = true;
+  programs.waybar = {
+    enable = true;
+    systemd = {
+      enable = true;
+      target = "graphical-session.target";
+    };
+  };
   services.mako.enable = true;
 
 
