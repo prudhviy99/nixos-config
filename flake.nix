@@ -5,6 +5,7 @@
     # move fast and the stable channel lags. Swap to "nixos-25.11" later if
     # you want to trade fresh packages for stability.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     # home-manager: user-environment manager.
     home-manager = {

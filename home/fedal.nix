@@ -91,6 +91,7 @@
     tree
     unzip
     file
+    glow
 
     docker-compose
     lazydocker

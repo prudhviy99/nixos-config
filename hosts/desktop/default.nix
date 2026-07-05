@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 {
-  imports = [ ./hardware-configuration.nix ../../modules/zram.nix ];
+  imports = [ ./hardware-configuration.nix ../../modules/zram.nix ../../modules/overlays.nix];
 
   networking.hostName = "desktop";
 

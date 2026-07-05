@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./hardware-configuration.nix ../../modules/zram.nix ];
+  imports = [ ./hardware-configuration.nix ../../modules/zram.nix ../../modules/overlays.nix];
   
   systemd.services.tlp.serviceConfig.StandardOutput = "null";
   # ---- Hostname ----
