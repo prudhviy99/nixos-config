@@ -21,6 +21,8 @@
       # Behavior
       copy-on-select = true;
       shell-integration = "zsh";
+      mouse-hide-while-typing = true;
+      resize-overlay = "never";
 
       # Cursor
       cursor-style       = "block";
