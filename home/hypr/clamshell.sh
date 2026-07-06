@@ -1,39 +1,35 @@
 #!/usr/bin/env bash
-# Clamshell + docking for Hyprland — reliability-first design.
+# Clamshell + docking for Hyprland — canonical "disable eDP-1" design.
 #
-# HARD CONSTRAINT proven on this machine: reaching ZERO enabled monitors wedges
-# the compositor (disable eDP-1 then unplug the external => black, frozen, even
-# keybinds dead; suspend can't save it — it collides with itself and stalls on
-# hyprlock). Therefore eDP-1 is NEVER disabled.
+# WHY DISABLE (not park off-screen): a monitor that is merely moved off-screen is
+# still ENABLED, so Hyprland keeps assigning new/ghost workspaces to it (Super+N,
+# auto-migrations) and they vanish onto the dark laptop panel. The only way to stop
+# that is to genuinely `disable` eDP-1 — a disabled output cannot hold a workspace.
+# This is what every working Hyprland clamshell setup does.
 #
-# To still get true clamshell (cursor cannot sit on the laptop panel) we PARK the
-# internal output far off-screen (99999x0) with a real gap and its backlight off.
-# A gap between monitors confines relative cursor motion, so the panel is
-# unreachable, yet it stays enabled so the monitor count never hits zero. On
-# unplug the panel is simply moved back to 0x0 and lit — no wedge, always recovers.
+# ZERO-MONITOR SAFETY: on THIS machine (Hyprland 0.55.4) the zero-monitor recovery
+# fix (hyprwm/Hyprland PR #14547) is NOT present — it lands in 0.56+. So if we ever
+# reach zero enabled monitors (undock while the lid is still closed), re-enabling can
+# fail and wedge the compositor. `ensure_output()` catches that and runs the one
+# confirmed recovery, `hyprctl reload` (hyprland.conf has eDP-1 enabled at 0x0).
 #
 # Wiring (hyprland.conf + home-manager systemd service):
 #   bindl switch:on:Lid Switch  -> lidclose  (== reconcile)
 #   bindl switch:off:Lid Switch -> reconcile (lid opened)
 #   bind  Super+Ctrl+D          -> restore   (force laptop panel back, any state)
-#   systemd user service        -> watch     (reacts to cable plug/unplug)
+#   systemd user service        -> watch     (reacts to cable plug/unplug via IPC)
 
 LAPTOP="eDP-1"
 LAPTOP_MODE="1920x1200@60"
-PARK_POS="99999x0"          # far off-screen; gap from the external confines the cursor
 LOG="$HOME/.cache/clamshell.log"
 
 log() { echo "$(date '+%F %T') $*" >> "$LOG" 2>/dev/null; }
 
-lid_present() {
-  ls /proc/acpi/button/lid/*/state >/dev/null 2>&1
-}
+lid_present() { ls /proc/acpi/button/lid/*/state >/dev/null 2>&1; }
+lid_closed()  { grep -q closed /proc/acpi/button/lid/*/state 2>/dev/null; }
 
-lid_closed() {
-  grep -q closed /proc/acpi/button/lid/*/state 2>/dev/null
-}
-
-# First enabled monitor that isn't the internal panel, or empty.
+# First ENABLED monitor that isn't the internal panel (i.e. the external), or empty.
+# Disabled eDP-1 does not appear in `hyprctl monitors`, so this is safe either way.
 external_name() {
   hyprctl monitors -j | jq -r --arg l "$LAPTOP" 'first(.[] | select(.name != $l) | .name) // empty'
 }
@@ -42,36 +38,39 @@ scale_of() {
   hyprctl monitors -j | jq -r --arg n "$1" 'first(.[] | select(.name == $n) | .scale) // 1'
 }
 
-move_workspaces_to() {
-  local target="$1" ws
-  for ws in $(hyprctl workspaces -j | jq -r --arg l "$LAPTOP" '.[] | select(.monitor == $l) | .id'); do
-    hyprctl dispatch moveworkspacetomonitor "$ws $target" >/dev/null
-  done
+# Count of currently ENABLED monitors.
+enabled_count() { hyprctl monitors -j | jq 'length'; }
+
+# Never leave the session with no output. If enabling eDP-1 failed because we hit the
+# 0.55.4 zero-monitor bug, reload the config (eDP-1 is enabled at 0x0 there) to recover.
+ensure_output() {
+  if [ "$(enabled_count)" -lt 1 ]; then
+    log "ZERO enabled monitors -> hyprctl reload (recovery)"
+    hyprctl reload >/dev/null
+  fi
 }
 
-# Laptop panel at the origin and lit; external (if present) to its right.
-# Order matters: move the external to its final spot (1920x0) BEFORE placing the
-# panel at 0x0, so the two are never both at the origin (Hyprland warns on any
-# momentary overlap). Explicit 1920x0 (not auto-right) avoids the external chasing
-# the panel while it is still parked far away.
+# Laptop panel primary at the origin and lit; external (if present) to its right.
+# Move the external to 1920x0 FIRST so enabling eDP-1 at 0x0 never transiently
+# overlaps it (Hyprland warns on any momentary overlap).
 laptop_primary() {
   local ext; ext="$(external_name)"
   [ -n "$ext" ] && hyprctl keyword monitor "$ext, preferred, 1920x0, $(scale_of "$ext")" >/dev/null
   hyprctl keyword monitor "$LAPTOP, $LAPTOP_MODE, 0x0, 1" >/dev/null
   hyprctl dispatch dpms on "$LAPTOP" >/dev/null
+  ensure_output
 }
 
 reconcile() {
   lid_present || { log "no lid switch on this host -> skip"; return; }
   local ext; ext="$(external_name)"
   if lid_closed && [ -n "$ext" ]; then
-    log "clamshell: park $LAPTOP at $PARK_POS (dark), $ext -> 0x0"
-    move_workspaces_to "$ext"
-    # Park the panel FIRST (out of the origin), then pin the external at 0x0.
-    # This ordering avoids a transient two-monitors-at-0x0 overlap warning.
-    hyprctl keyword monitor "$LAPTOP, $LAPTOP_MODE, $PARK_POS, 1" >/dev/null
+    # Clamshell: external only. Pin it at 0x0, then fully DISABLE the laptop panel so
+    # it can never receive a workspace. Hyprland auto-migrates eDP-1's workspaces to
+    # the external — do NOT move them by hand (that creates stale monitor bindings).
+    log "clamshell: external=$ext at 0x0, disable $LAPTOP"
     hyprctl keyword monitor "$ext, preferred, 0x0, $(scale_of "$ext")" >/dev/null
-    hyprctl dispatch dpms off "$LAPTOP" >/dev/null
+    hyprctl keyword monitor "$LAPTOP, disable" >/dev/null
   else
     log "laptop primary (lid_closed=$(lid_closed && echo y || echo n) ext='$ext')"
     laptop_primary
@@ -94,7 +93,13 @@ case "${1:-}" in
     socat -u "UNIX-CONNECT:$SOCKET" - | while IFS= read -r line; do
       case "$line" in
         monitoradded*|monitorremoved*)
-          log "watch: event ${line%%>>*}"
+          # Ignore events about our OWN eDP-1 disable/enable to avoid any self-loop;
+          # only react to the EXTERNAL monitor appearing/disappearing.
+          case "$line" in
+            *"$LAPTOP"*) continue ;;
+          esac
+          log "watch: event ${line%%$'\n'*}"
+          sleep 0.3            # coalesce the add/addv2 burst before acting
           reconcile
           ;;
       esac
