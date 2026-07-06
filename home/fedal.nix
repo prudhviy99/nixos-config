@@ -20,6 +20,11 @@
   home.stateVersion  = "26.05";  # match configuration.nix; do not change
   
   programs.home-manager.enable = true;
+
+  # Auto-restart changed user services (waybar, mako, hypr-clamshell, …) during a
+  # `nixos-rebuild switch`, so an in-place rebuild picks up changes without a manual
+  # `systemctl --user restart`. A fresh login already starts the current versions.
+  systemd.user.startServices = "sd-switch";
   # ---- User packages ----
   home.packages = with pkgs; [
     # Browser
@@ -34,6 +39,7 @@
     hyprpicker          # color picker
     mako                # notifications
     wl-clipboard        # wl-copy / wl-paste
+    socat               # clamshell: reads Hyprland event socket for monitor hotplug
     cliphist            # clipboard history
     brightnessctl       # brightness control
     playerctl           # media key control
@@ -224,11 +230,30 @@
     enable = true;
     systemd = {
       enable = true;
-      target = "graphical-session.target";
+      targets = [ "graphical-session.target" ];
     };
   };
   services.mako.enable = true;
 
+  # Clamshell/docking watcher: reconciles the internal panel when a monitor is
+  # plugged in or unplugged (see home/hypr/clamshell.sh). The script is idempotent
+  # so it cannot enter the disable<->enable feedback loop that a naive watcher does.
+  systemd.user.services.hypr-clamshell = {
+    Unit = {
+      Description = "Hyprland clamshell/docking reconciler";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "%h/.config/hypr/clamshell.sh watch";
+      Restart = "on-failure";
+      RestartSec = "2s";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 
   programs.fuzzel = {
     enable = true;

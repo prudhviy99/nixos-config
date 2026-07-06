@@ -79,10 +79,15 @@
   # After first boot, run: fwupdmgr refresh && fwupdmgr update
 
   # ---- Lid behavior ----
+  # Hyprland's clamshell.sh owns the lid (see home/hypr/clamshell.sh):
+  #   docked   -> disable the internal panel, keep the external monitor
+  #   undocked -> suspend
+  # logind must ignore the lid entirely, otherwise it suspends on lid-close
+  # while docked (external power) and races with the compositor.
   services.logind.settings.Login = {
-    HandleLidSwitch              = "suspend";
+    HandleLidSwitch              = "ignore";
     HandleLidSwitchDocked         = "ignore";
-    HandleLidSwitchExternalPower  = "suspend";
+    HandleLidSwitchExternalPower  = "ignore";
     HandlePowerKey               = "suspend";
   };
 }
