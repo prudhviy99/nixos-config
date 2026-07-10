@@ -78,8 +78,20 @@ reconcile() {
 }
 
 case "${1:-}" in
-  reconcile|lidclose)
+  reconcile)
     reconcile
+    ;;
+  lidclose)
+    # Undocked (no external) + lid just closed -> actually suspend. Otherwise
+    # reconcile()'s else-branch would call laptop_primary() and force eDP-1
+    # back on/dpms-on right after the lid shut, which is why the laptop used
+    # to never lock/sleep and just sat awake in the bag draining the battery.
+    if lid_present && lid_closed && [ -z "$(external_name)" ]; then
+      log "lid closed, undocked -> suspend"
+      systemctl suspend
+    else
+      reconcile
+    fi
     ;;
   restore)
     log "manual restore (Super+Ctrl+D)"

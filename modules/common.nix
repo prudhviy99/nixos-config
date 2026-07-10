@@ -54,6 +54,18 @@
   # ---- Enable unfree packages (chromium, 1password, spotify, etc.) ----
   nixpkgs.config.allowUnfree = true;
 
+  # ---- nix-ld: run foreign dynamically linked binaries ----
+  # Downloaded tools (Zed's java-lsp-proxy, Selenium Manager's chromedriver,
+  # Playwright's bundled Node, etc.) expect a real glibc loader at
+  # /lib64/ld-linux-x86-64.so.2; without this they die with
+  # "Could not start dynamically linked executable".
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc
+    glibc
+    zlib
+  ];
+
   # ---- Flakes ----
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
