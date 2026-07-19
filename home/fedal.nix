@@ -62,6 +62,7 @@
     discord
     vscode                   # use vscode-fhs instead if marketplace extensions misbehave
     claude-code
+    codex
     antigravity
     jetbrains.idea       # intellij free
     nautilus                 # GUI file manager
