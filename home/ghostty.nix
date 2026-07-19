@@ -27,6 +27,10 @@
       # Cursor
       cursor-style       = "block";
       cursor-style-blink = false;
+
+      # Cursor sliding/trail animation (CachyOS kitty-style), via GLSL shader
+      custom-shader           = "${./shaders/cursor_blaze.glsl}";
+      custom-shader-animation = true;
     };
   };
 }
