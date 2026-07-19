@@ -10,6 +10,26 @@
     allowedUDPPorts = [ 53317 ];
   };
 
+  # --- Remote access: SSH + Ollama from other devices on the LAN ---
+  # Only reachable on the local network — no router port-forwarding involved.
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = true;
+      PermitRootLogin = "no";
+    };
+  };
+
+  # Runs ollama as a systemd service (auto-starts on boot, restarts on crash)
+  # instead of needing `ollama serve` run manually every time.
+  services.ollama = {
+    enable = true;
+    host = "0.0.0.0"; # listen on all interfaces so LAN devices can reach it, not just localhost
+    port = 11434;
+    package = pkgs.ollama-cuda; # use the RTX 5080
+    openFirewall = true;
+  };
+
 
   # --- Bootloader (only if your modules/common.nix doesn't already set one) ---
   # If common.nix already enables systemd-boot, DELETE this block to avoid a clash.
