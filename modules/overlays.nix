@@ -8,6 +8,6 @@ in
 {
   nixpkgs.overlays = [ (final: prev: {
     claude-code = unstable.claude-code;
-    codex = unstable.codex;
-  }) ];
+    codex = inputs.codex-cli-nix.packages.${prev.stdenv.hostPlatform.system}.default;
+}) ];
 }
