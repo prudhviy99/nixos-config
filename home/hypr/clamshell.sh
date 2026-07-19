@@ -71,27 +71,26 @@ reconcile() {
     log "clamshell: external=$ext at 0x0, disable $LAPTOP"
     hyprctl keyword monitor "$ext, preferred, 0x0, $(scale_of "$ext")" >/dev/null
     hyprctl keyword monitor "$LAPTOP, disable" >/dev/null
+  elif lid_closed; then
+    # Lid closed and no external — either freshly undocked, or the external just
+    # dropped its link (standby/power-save/cable reseat). Either way there is no
+    # reason to have any panel lit behind a closed lid, so suspend instead of
+    # calling laptop_primary() to re-enable eDP-1. This is what used to keep the
+    # machine fully awake (screen forced back on) for hours/days, draining the
+    # battery and running the fans. On lid-open, the normal reconcile() call from
+    # the switch:off bind re-enables eDP-1 via laptop_primary()/ensure_output()
+    # exactly as before — that recovery path is unchanged.
+    log "lid closed, no external -> suspend"
+    systemctl suspend
   else
-    log "laptop primary (lid_closed=$(lid_closed && echo y || echo n) ext='$ext')"
+    log "laptop primary (lid_closed=n ext='$ext')"
     laptop_primary
   fi
 }
 
 case "${1:-}" in
-  reconcile)
+  reconcile|lidclose)
     reconcile
-    ;;
-  lidclose)
-    # Undocked (no external) + lid just closed -> actually suspend. Otherwise
-    # reconcile()'s else-branch would call laptop_primary() and force eDP-1
-    # back on/dpms-on right after the lid shut, which is why the laptop used
-    # to never lock/sleep and just sat awake in the bag draining the battery.
-    if lid_present && lid_closed && [ -z "$(external_name)" ]; then
-      log "lid closed, undocked -> suspend"
-      systemctl suspend
-    else
-      reconcile
-    fi
     ;;
   restore)
     log "manual restore (Super+Ctrl+D)"
