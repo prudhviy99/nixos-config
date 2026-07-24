@@ -8,7 +8,7 @@
     "margin-right": 8,
 
     "modules-left":   ["hyprland/workspaces", "mpris"],
-    "modules-center": ["clock"],
+    "modules-center": ["custom/weather", "clock"],
     "modules-right":  ["bluetooth", "network", "pulseaudio", "battery", "tray"],
 
     "hyprland/workspaces": {
@@ -25,6 +25,14 @@
     "clock": {
         "format": "{:%a %b %d  %H:%M}",
         "tooltip-format": "<tt>{calendar}</tt>"
+    },
+    "custom/weather": {
+        "exec": "~/.config/waybar/weather.sh",
+        "return-type": "json",
+        "interval": 900,
+        "restart-interval": 60,
+        "tooltip": true,
+        "on-click": "ghostty --class=weather -e ~/.config/waybar/weather.sh full"
     },
     "bluetooth": {
         "format": "",

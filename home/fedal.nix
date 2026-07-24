@@ -177,6 +177,53 @@
 
   # ---- Waybar config ----
   xdg.configFile."waybar/config.jsonc".source = ./hypr/waybar/config.jsonc;
+  xdg.configFile."waybar/weather.sh" = {
+    executable = true;
+    text = ''
+      #!${pkgs.bash}/bin/bash
+
+      set -u
+
+      if [[ "''${1:-}" == "full" ]]; then
+        if ! ${pkgs.curl}/bin/curl --silent --show-error --fail --max-time 20 \
+          "https://wttr.in/?F"; then
+          printf "\nUnable to load the weather from wttr.in.\n"
+        fi
+
+        printf "\nPress Enter to close..."
+        IFS= read -r _
+        exit
+      fi
+
+      weather_data="$(${pkgs.curl}/bin/curl --silent --fail --max-time 10 \
+        "https://wttr.in/?format=j1")" || exit 1
+
+      weather_code="$(printf "%s" "$weather_data" |
+        ${pkgs.jq}/bin/jq --raw-output \
+          '.current_condition[0].weatherCode // empty')"
+      weather_tooltip="$(printf "%s" "$weather_data" |
+        ${pkgs.jq}/bin/jq --raw-output \
+          '.current_condition[0] |
+           "\(.weatherDesc[0].value), \(.temp_C)°C (feels like \(.FeelsLikeC)°C)"')"
+
+      # Monochrome Font Awesome/Nerd Font glyphs rather than color emoji.
+      case "$weather_code" in
+        113) weather_icon="" ;;
+        116|119|122) weather_icon="" ;;
+        143|248|260) weather_icon="≋" ;;
+        179|182|185|227|230|281|284|311|314|317|320|323|326|329|332|335|338|350|362|365|368|371|374|377)
+          weather_icon=""
+          ;;
+        200|386|389|392|395) weather_icon="" ;;
+        *) weather_icon="" ;;
+      esac
+
+      ${pkgs.jq}/bin/jq --null-input --compact-output \
+        --arg text "$weather_icon" \
+        --arg tooltip "$weather_tooltip" \
+        '{ text: $text, tooltip: $tooltip }'
+    '';
+  };
 
   xdg.configFile."waybar/style.css".text = ''
     @define-color bg      ${config.lib.stylix.colors.withHashtag.base00};
@@ -200,7 +247,7 @@
         color: @text;
     }
 
-    #workspaces, #window, #clock, #bluetooth, #network,
+    #workspaces, #window, #clock, #custom-weather, #bluetooth, #network,
     #pulseaudio, #battery, #tray, #custom-tray-arrow {
         background: alpha(@bg, 0.55);
         border: 1px solid alpha(@surface, 0.6);
