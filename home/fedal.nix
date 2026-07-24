@@ -68,6 +68,7 @@
     nautilus                 # GUI file manager
     transmission_4-gtk       # torrent client (GTK GUI)
     localsend                # file sharing over network
+    croc                     #file sharing
     vlc                      # media player
 
     # neovim/LazyVim runtime deps (for group 5):
