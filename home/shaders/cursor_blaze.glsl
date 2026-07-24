@@ -83,6 +83,11 @@ const float DRAW_THRESHOLD = 1.5;
 // Don't draw trails within the same line: same line jumps are usually where
 // people expect them.
 const bool HIDE_TRAILS_ON_THE_SAME_LINE = false;
+// Teleport guard: skip the trail for jumps larger than this fraction of the
+// screen height. Prevents the cross-screen flash when a redraw momentarily
+// parks the cursor in a corner (e.g. LSP/notification popups in neovim).
+// Lower = stricter (fewer big trails); raise toward 1.0 to allow longer jumps.
+const float MAX_TRAIL_DISTANCE = 0.4;
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
@@ -122,8 +127,9 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     float lineLength = distance(centerCC, centerCP);
     //
     bool isFarEnough = lineLength > trailThreshold;
+    bool isNotTeleport = lineLength < MAX_TRAIL_DISTANCE * iResolution.y;
     bool isOnSeparateLine = HIDE_TRAILS_ON_THE_SAME_LINE ? currentCursor.y != previousCursor.y : true;
-    if (isFarEnough && isOnSeparateLine) {
+    if (isFarEnough && isNotTeleport && isOnSeparateLine) {
         float distanceToEnd = distance(vu.xy, centerCC);
         float alphaModifier = distanceToEnd / (lineLength * (easedProgress));
 
