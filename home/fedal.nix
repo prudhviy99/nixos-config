@@ -21,10 +21,11 @@
   
   programs.home-manager.enable = true;
 
-  # Auto-restart changed user services (waybar, mako, hypr-clamshell, …) during a
-  # `nixos-rebuild switch`, so an in-place rebuild picks up changes without a manual
-  # `systemctl --user restart`. A fresh login already starts the current versions.
-  systemd.user.startServices = "sd-switch";
+  # Do not let Home Manager stop/restart the live UWSM graphical-session tree
+  # during a `nixos-rebuild switch`; doing so can create a systemd ordering
+  # cycle and tear down Hyprland. Home Manager prints any suggested restarts,
+  # while a fresh login starts all user services from the new generation.
+  systemd.user.startServices = false;
   # ---- User packages ----
   home.packages = with pkgs; [
     # Browser

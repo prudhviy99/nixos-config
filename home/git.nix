@@ -3,28 +3,28 @@
 {
   programs.git = {
     enable = true;
-    
-    # These attributes are natively supported at the top level
-    userName = "Prudhvi Yalamanchili";
-    userEmail = "prudhviy99@gmail.com";
-    
+
     ignores = [ 
       ".DS_Store" 
       "*.swp" 
       ".direnv/" 
       "result" 
-      "result-*" 
+      "result-*"
     ];
 
-    aliases = {
-      st = "status";
-      co = "checkout";
-      br = "branch";
-      lg = "log --oneline --graph --decorate -20";
-    };
+    settings = {
+      user = {
+        name = "Prudhvi Yalamanchili";
+        email = "prudhviy99@gmail.com";
+      };
 
-    # Custom options go into extraConfig using Nix's dot syntax
-    extraConfig = {
+      alias = {
+        st = "status";
+        co = "checkout";
+        br = "branch";
+        lg = "log --oneline --graph --decorate -20";
+      };
+
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;
