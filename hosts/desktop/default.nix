@@ -58,6 +58,11 @@
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";          # runs Electron/Chromium (Discord, VSCode) natively on Wayland -> clean screenshare
     LIBVA_DRIVER_NAME = "nvidia";  # VA-API decode through nvidia
+    # Recommended by the Hyprland wiki for NVIDIA + wlroots stability
+    # (mitigates compositor freezes/black-screen-on-resume with the nvidia driver).
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    NVD_BACKEND = "direct";
   };
 
   # --- Firmware for webcams and other USB peripherals ---

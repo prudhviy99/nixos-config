@@ -13,11 +13,20 @@
     plugins = with pkgs.tmuxPlugins; [
       sensible              # community sensible defaults
       yank                  # better copy-to-system-clipboard
+      resurrect              # save/restore session layout (windows, panes, cwd)
+      continuum               # auto-saves resurrect state + auto-restores on tmux start
     ];
 
     extraConfig = ''
       # Reload config: prefix + r
       bind r source-file ~/.config/tmux/tmux.conf \; display "reloaded"
+
+      # ---- Session persistence (resurrect + continuum) ----
+      # Survives reboots/crashes: state is saved every 5 min and restored
+      # automatically the next time a tmux server starts.
+      set -g @resurrect-capture-pane-contents 'on'
+      set -g @continuum-restore 'on'
+      set -g @continuum-save-interval '5'
 
       # Split panes using | and -, keep CWD
       bind | split-window -h -c "#{pane_current_path}"
