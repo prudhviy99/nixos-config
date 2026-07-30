@@ -52,6 +52,7 @@
     fastfetch           # display system information
     openrgb             # rgb control
     obsidian            # note taking
+    cliamp
 
     # Editor (config later)
     neovim
