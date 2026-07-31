@@ -13,20 +13,33 @@
     plugins = with pkgs.tmuxPlugins; [
       sensible              # community sensible defaults
       yank                  # better copy-to-system-clipboard
-      resurrect              # save/restore session layout (windows, panes, cwd)
-      continuum               # auto-saves resurrect state + auto-restores on tmux start
+      {
+        plugin = resurrect;   # save/restore session layout (windows, panes, cwd)
+        extraConfig = ''
+          set -g @resurrect-capture-pane-contents 'on'
+        '';
+      }
+      {
+        plugin = continuum;   # auto-saves resurrect state + auto-restores/auto-starts tmux
+        # Must live in this plugin's own `extraConfig`, not the top-level one below:
+        # continuum's run-shell reads these @continuum-* options the instant it
+        # loads, and home-manager sources the top-level extraConfig only *after*
+        # all plugin run-shell lines - by then it's too late, continuum has
+        # already read the (unset) defaults.
+        extraConfig = ''
+          set -g @continuum-restore 'on'
+          set -g @continuum-save-interval '5'
+          # Installs + enables a systemd --user unit (tmux.service) that starts
+          # a detached tmux server at login, so there's always a server for
+          # continuum-restore to restore into after a reboot.
+          set -g @continuum-boot 'on'
+        '';
+      }
     ];
 
     extraConfig = ''
       # Reload config: prefix + r
       bind r source-file ~/.config/tmux/tmux.conf \; display "reloaded"
-
-      # ---- Session persistence (resurrect + continuum) ----
-      # Survives reboots/crashes: state is saved every 5 min and restored
-      # automatically the next time a tmux server starts.
-      set -g @resurrect-capture-pane-contents 'on'
-      set -g @continuum-restore 'on'
-      set -g @continuum-save-interval '5'
 
       # Split panes using | and -, keep CWD
       bind | split-window -h -c "#{pane_current_path}"
@@ -65,5 +78,30 @@
       set -g clock-mode-colour "#9ccfd8"
       set -g clock-mode-style 24
     '';
+  };
+
+  # ---- Boot-time tmux server for continuum-restore ----
+  # continuum's own `@continuum-boot` writes this same unit imperatively, but
+  # without TMUX_TMPDIR it lands on the wrong socket: programs.tmux sets
+  # secureSocket (default on Linux), which points interactive shells at
+  # $XDG_RUNTIME_DIR/tmux-$UID/ via TMUX_TMPDIR - but a plain systemd user
+  # service doesn't inherit that, so it falls back to /tmp/tmux-$UID/,
+  # a different, invisible-to-your-shell server. Declaring it here with
+  # TMUX_TMPDIR=%t (systemd specifier for the runtime dir) keeps both on the
+  # same socket. continuum sees this file already exists and just enables it.
+  systemd.user.services.tmux = {
+    Unit.Description = "tmux default session (detached)";
+    Install.WantedBy = [ "default.target" ];
+    Service = {
+      Type = "forking";
+      Environment = [ "DISPLAY=:0" "TMUX_TMPDIR=%t" ];
+      ExecStart = "${pkgs.tmux}/bin/tmux new-session -d";
+      ExecStop = [
+        "${pkgs.tmuxPlugins.resurrect}/share/tmux-plugins/resurrect/scripts/save.sh"
+        "${pkgs.tmux}/bin/tmux kill-server"
+      ];
+      KillMode = "none";
+      RestartSec = 2;
+    };
   };
 }
