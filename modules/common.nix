@@ -49,6 +49,9 @@
     curl
     pciutils      # lspci, useful for hardware debugging
     usbutils      # lsusb
+    exfatprogs    # mkfs.exfat/fsck.exfat/exfatlabel — needed to clear the dirty-bit
+                  # flag macOS leaves behind, which otherwise forces Linux to mount
+                  # exfat drives read-only
   ];
 
   # ---- Enable unfree packages (chromium, 1password, spotify, etc.) ----
@@ -94,5 +97,13 @@
   services.udev.packages = [ pkgs.openrgb ];
   boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
   boot.kernelParams = [ "acpi_enforce_resources=lax" ];
+
+  # NOTE: tried "usb-storage.quirks=0bda:9210:u" to fix UAS instability on the
+  # Ugreen NVMe enclosure (Realtek RTL9210 bridge, idVendor=0bda idProduct=9210).
+  # Reverted — it made things worse: with plain usb-storage the device fails
+  # during enumeration itself (resets ~20s in, never becomes a block device),
+  # whereas stock `uas` at least mounts and handles light I/O, only failing
+  # under sustained heavy writes. See conversation history before reaching
+  # for this quirk again.
 
 }
