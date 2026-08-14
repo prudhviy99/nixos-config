@@ -22,12 +22,13 @@
   # fix screen flickering
   boot.kernelParams = [ "i915.enable_psr=0" ];
 
-  # Intel CNVi (Alder Lake-P) WiFi keeps dropping after inactivity even with TLP power-save off.
-  # Force-disable power management at the driver level.
-  boot.extraModprobeConfig = ''
-    options iwlwifi power_save=0
-    options iwlmvm power_scheme=1
-  '';
+  # NOTE (2026-08-05): there used to be an iwlwifi power_save=0 / iwlmvm
+  # power_scheme=1 override here, added because "WiFi keeps dropping after
+  # inactivity". That diagnosis was wrong - the drops were the airplane-mode key
+  # on the function row being pressed (rfkill), not power management. The
+  # override forced the card into continuously-awake mode, burning power around
+  # the clock for nothing, so it is gone. If WiFi ever "drops" again, check
+  # `rfkill list` before blaming power saving.
 
   # ---- Intel CPU microcode (10th gen on T14s Gen 1 Intel) ----
   hardware.cpu.intel.updateMicrocode = true;
@@ -62,9 +63,21 @@
       START_CHARGE_THRESH_BAT0 = 75;
       STOP_CHARGE_THRESH_BAT0  = 80;
 
-      # TLP overrides NetworkManager's wifi.powersave=false — explicitly disable it here
+      # WiFi power saving: off on AC (lowest latency while docked/working), on when
+      # on battery. This is TLP's own default split. It was previously "off" in both
+      # cases to chase phantom WiFi drops that turned out to be the rfkill key - see
+      # the note near boot.extraModprobeConfig above.
       WIFI_PWR_ON_AC  = "off";
-      WIFI_PWR_ON_BAT = "off";
+      WIFI_PWR_ON_BAT = "on";
+
+      # PCIe runtime PM while on AC. TLP's default is "on", which pins every PCIe
+      # device fully powered whenever the charger is connected — that is why the
+      # fans stay audible sitting idle in clamshell at the desk. "auto" only lets
+      # devices drop down once they are genuinely idle; anything under load stays
+      # at full speed, so there is no throughput or latency cost while working.
+      # xhci_hcd (USB) is already in TLP's RUNTIME_PM_DRIVER_DENYLIST, so dock USB
+      # is untouched. Matches RUNTIME_PM_ON_BAT, which has been "auto" all along.
+      RUNTIME_PM_ON_AC = "auto";
     };
   };
   services.thermald.enable = true;   # Intel thermal management daemon

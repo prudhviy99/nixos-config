@@ -345,6 +345,18 @@ services.hypridle = {
       # (happened 2026-07-28 - system had to be power-cycled). The lock
       # screen already darkens the display; let the monitor's own DPMS/APM
       # power saving take over after the lock, instead of us toggling it.
+      {
+        timeout = 1800;                # 30 min -> suspend (skipped if media is playing)
+        on-timeout = "playerctl status 2>/dev/null | grep -q Playing || systemctl suspend";
+      }
+      # Why this exists: clamshell.sh only suspends on lid-close when there is NO
+      # external monitor. Docked with the lid shut we stay awake on purpose (that
+      # is the whole point of clamshell mode), and logind ignores the lid, so
+      # nothing ever suspended a docked machine - it idled awake for days with the
+      # fans running. Same story with the lid open on battery. This is the only
+      # idle path to suspend; it deliberately does NOT touch dpms, so it cannot
+      # hit the 2026-07-28 freeze above - suspend/resume drives the panels itself
+      # and after_sleep_cmd already restores them.
     ];
   };
 };
