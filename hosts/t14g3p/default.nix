@@ -3,7 +3,6 @@
 {
   imports = [ ./hardware-configuration.nix ../../modules/zram.nix ../../modules/overlays.nix];
   
-  systemd.services.tlp.serviceConfig.StandardOutput = "null";
   # ---- Hostname ----
   networking.hostName = "t14g3p";
 
@@ -13,81 +12,54 @@
     allowedUDPPorts = [ 53317 ];
   };
 
-  #memtest86+
-  
+  # memtest86+
   boot.loader.systemd-boot.memtest86.enable = true;
 
+  # Enable RTC alarm for reliable s2idle wakeup and suspend-then-hibernate.
+  # PSR (Panel Self Refresh) is kept enabled by default for battery savings.
+  boot.kernelParams = [ "rtc_cmos.use_acpi_alarm=1" ];
 
-  
-  # fix screen flickering
-  boot.kernelParams = [ "i915.enable_psr=0" ];
-
-  # Intel CNVi (Alder Lake-P) WiFi keeps dropping after inactivity even with TLP power-save off.
-  # Force-disable power management at the driver level.
-  boot.extraModprobeConfig = ''
-    options iwlwifi power_save=0
-    options iwlmvm power_scheme=1
-  '';
-
-  # ---- Intel CPU microcode (10th gen on T14s Gen 1 Intel) ----
+  # ---- Intel CPU microcode ----
   hardware.cpu.intel.updateMicrocode = true;
 
-  # ---- Intel iGPU acceleration (UHD Graphics) ----
+  # ---- Intel iGPU acceleration (Iris Xe / UHD Graphics) ----
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
     extraPackages = with pkgs; [
-      intel-media-driver       # iHD: gen8+ (your CPU)
-      intel-vaapi-driver               # i965: legacy fallback
+      intel-media-driver       # iHD: gen8+ (Alder Lake)
+      intel-vaapi-driver       # i965: legacy fallback
       vpl-gpu-rt               # newer media SDK
     ];
   };
 
   # ---- Power management ----
-  # TLP gives you significantly better battery life than the default
-  services.tlp = {
-    enable = true;
-    settings = {
-      CPU_SCALING_GOVERNOR_ON_AC  = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-
-      CPU_ENERGY_PERF_POLICY_ON_AC  = "performance";
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_performance";
-
-      CPU_BOOST_ON_AC  = 1;
-      CPU_BOOST_ON_BAT = 1;   # TLP disables turbo on battery by default
-
-      # ThinkPad battery thresholds: charge to 80, start charging again at 75.
-      # Massively extends battery lifespan over the years.
-      START_CHARGE_THRESH_BAT0 = 75;
-      STOP_CHARGE_THRESH_BAT0  = 80;
-
-      # TLP overrides NetworkManager's wifi.powersave=false — explicitly disable it here
-      WIFI_PWR_ON_AC  = "off";
-      WIFI_PWR_ON_BAT = "off";
-    };
-  };
+  # power-profiles-daemon integrates natively with Intel P-State & Alder Lake E-cores
+  services.power-profiles-daemon.enable = true;
   services.thermald.enable = true;   # Intel thermal management daemon
 
-  # ---- Fingerprint reader (Synaptics WBDI on the T14s Gen 1) ----
+  # ---- Lazy-unmount FUSE mounts before suspend to prevent s2idle sleep freeze ----
+  powerManagement.powerDownCommands = ''
+    while IFS=' ' read -r _ mountpoint fstype _; do
+      if [[ "$fstype" == "fuse.gvfsd-fuse" ]]; then
+        ${pkgs.fuse3}/bin/fusermount3 -uz "$mountpoint" 2>/dev/null || true
+      fi
+    done < /proc/mounts
+  '';
+
+  # ---- Fingerprint reader (Synaptics WBDI) ----
   services.fprintd.enable = true;
   systemd.services.fprintd.serviceConfig.TimeoutStopSec = 5;
 
-  # ---- Firmware updates via LVFS (Lenovo pushes BIOS through this) ----
+  # ---- Firmware updates via LVFS ----
   services.fwupd.enable = true;
 
-  # After first boot, run: fwupdmgr refresh && fwupdmgr update
-
-  # ---- Lid behavior ----
-  # Hyprland's clamshell.sh owns the lid (see home/hypr/clamshell.sh):
-  #   docked   -> disable the internal panel, keep the external monitor
-  #   undocked -> suspend
-  # logind must ignore the lid entirely, otherwise it suspends on lid-close
-  # while docked (external power) and races with the compositor.
+  # ---- Lid behavior & Sleep synchronization ----
   services.logind.settings.Login = {
-    HandleLidSwitch              = "ignore";
+    HandleLidSwitch              = "suspend";
     HandleLidSwitchDocked         = "ignore";
-    HandleLidSwitchExternalPower  = "ignore";
-    HandlePowerKey               = "suspend";
+    HandleLidSwitchExternalPower  = "suspend";
+    HandlePowerKey               = "ignore";
+    InhibitDelayMaxSec           = 15;
   };
 }

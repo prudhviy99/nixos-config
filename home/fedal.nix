@@ -340,11 +340,15 @@ services.hypridle = {
         timeout = 300;                 # 5 min -> lock (skipped if media is playing)
         on-timeout = "playerctl status 2>/dev/null | grep -q Playing || loginctl lock-session";
       }
-      # Deliberately no dpms-off listener: Hyprland + NVIDIA can freeze the
-      # compositor on the dpms-off -> dpms-on -> hyprlock unlock sequence
-      # (happened 2026-07-28 - system had to be power-cycled). The lock
-      # screen already darkens the display; let the monitor's own DPMS/APM
-      # power saving take over after the lock, instead of us toggling it.
+      {
+        timeout = 360;                 # 6 min -> turn off screen (DPMS off)
+        on-timeout = "hyprctl dispatch dpms off";
+        on-resume = "hyprctl dispatch dpms on";
+      }
+      {
+        timeout = 900;                 # 15 min -> suspend on prolonged idle
+        on-timeout = "systemctl suspend";
+      }
     ];
   };
 };
