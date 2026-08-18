@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [ ./hardware-configuration.nix ../../modules/zram.nix ../../modules/overlays.nix];
@@ -38,6 +38,21 @@
   services.power-profiles-daemon.enable = true;
   services.thermald.enable = true;   # Intel thermal management daemon
 
+  # Automatic display power-off and idle suspend are safe on this Intel laptop,
+  # but must not leak into the shared Home Manager profile (the NVIDIA desktop
+  # can freeze during the DPMS off/on lock sequence).
+  home-manager.users.fedal.services.hypridle.settings.listener = lib.mkAfter [
+    {
+      timeout = 360;                 # 6 min -> turn off screen (DPMS off)
+      on-timeout = "hyprctl dispatch dpms off";
+      on-resume = "hyprctl dispatch dpms on";
+    }
+    {
+      timeout = 900;                 # 15 min -> suspend on prolonged idle
+      on-timeout = "systemctl suspend";
+    }
+  ];
+
   # ---- Lazy-unmount FUSE mounts before suspend to prevent s2idle sleep freeze ----
   powerManagement.powerDownCommands = ''
     while IFS=' ' read -r _ mountpoint fstype _; do
@@ -54,12 +69,14 @@
   # ---- Firmware updates via LVFS ----
   services.fwupd.enable = true;
 
-  # ---- Lid behavior & Sleep synchronization ----
+  # ---- Lid behavior ----
+  # Hyprland's clamshell.sh owns lid handling so a docked laptop keeps running
+  # on its external display. Letting logind handle these events as well races the
+  # compositor-side handler and can suspend the machine while it is docked.
   services.logind.settings.Login = {
-    HandleLidSwitch              = "suspend";
+    HandleLidSwitch              = "ignore";
     HandleLidSwitchDocked         = "ignore";
-    HandleLidSwitchExternalPower  = "suspend";
-    HandlePowerKey               = "ignore";
-    InhibitDelayMaxSec           = 15;
+    HandleLidSwitchExternalPower  = "ignore";
+    HandlePowerKey               = "suspend";
   };
 }

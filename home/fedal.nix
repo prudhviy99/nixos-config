@@ -340,15 +340,10 @@ services.hypridle = {
         timeout = 300;                 # 5 min -> lock (skipped if media is playing)
         on-timeout = "playerctl status 2>/dev/null | grep -q Playing || loginctl lock-session";
       }
-      {
-        timeout = 360;                 # 6 min -> turn off screen (DPMS off)
-        on-timeout = "hyprctl dispatch dpms off";
-        on-resume = "hyprctl dispatch dpms on";
-      }
-      {
-        timeout = 900;                 # 15 min -> suspend on prolonged idle
-        on-timeout = "systemctl suspend";
-      }
+      # Deliberately no shared dpms-off listener: Hyprland + NVIDIA can freeze
+      # the desktop compositor on the dpms-off -> dpms-on -> hyprlock sequence.
+      # Hosts that safely support automatic DPMS/suspend add their listeners in
+      # their host module instead.
     ];
   };
 };
