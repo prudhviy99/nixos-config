@@ -26,7 +26,9 @@
       reload = "exec zsh";
 
       # NixOS shortcuts you'll use constantly
-      rebuild  = "sudo nixos-rebuild switch --flake ~/nixos-config#t14g3p";
+      # Keep the flake output name aligned with networking.hostName on each host.
+      # This lets the same Home Manager configuration rebuild the correct machine.
+      rebuild  = "sudo nixos-rebuild switch --flake ~/nixos-config#$(hostname -s)";
       update   = "nix flake update ~/nixos-config";
       cleanup  = "sudo nix-collect-garbage --delete-older-than 14d";
     };
